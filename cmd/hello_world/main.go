@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"os"
 
@@ -44,6 +45,22 @@ func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server) *kratos.App {
 			gs,
 			hs,
 		),
+		kratos.BeforeStart(func(ctx context.Context) error {
+			logger.Log(log.LevelInfo, "start hello world")
+			return nil
+		}),
+		kratos.AfterStart(func(ctx context.Context) error {
+			logger.Log(log.LevelInfo, "start after hello world")
+			return nil
+		}),
+		kratos.BeforeStop(func(ctx context.Context) error {
+			logger.Log(log.LevelInfo, "start after hello world")
+			return nil
+		}),
+		kratos.AfterStop(func(ctx context.Context) error {
+			logger.Log(log.LevelInfo, "start after hello world")
+			return nil
+		}),
 	)
 }
 
@@ -58,6 +75,7 @@ func main() {
 		"trace.id", tracing.TraceID(),
 		"span.id", tracing.SpanID(),
 	)
+	// 读取配置文件，可以改成从 nacos、applo等配置中心获取
 	c := config.New(
 		config.WithSource(
 			file.NewSource(flagconf),
@@ -69,11 +87,16 @@ func main() {
 		panic(err)
 	}
 
+	// 将读取到到配置写入到conf.Bootstrap结构体中
+	// 主要包括server配置和data配置，分别在internal/conf/conf.proto中定义，
+	// 然后通过protoc-gen-go生成结构体到internal/conf/conf.pb.go中
 	var bc conf.Bootstrap
 	if err := c.Scan(&bc); err != nil {
 		panic(err)
 	}
 
+	// 通过 wire 将依赖注入,并调用 newApp 方法，
+	// cleanup定义一些应用退出后的清理操作，如：关闭数据库连接等
 	app, cleanup, err := wireApp(bc.Server, bc.Data, logger)
 	if err != nil {
 		panic(err)
@@ -81,6 +104,8 @@ func main() {
 	defer cleanup()
 
 	// start and wait for stop signal
+	// 调用github.com/go-kratos/kratos/v2/app.go中的 func (a *App) Run() error 启动app，然后等待停止信号，
+	// 收到停止信号后调用github.com/go-kratos/kratos/v2/app.go中 func (a *App) Stop() (err error) 停掉app
 	if err := app.Run(); err != nil {
 		panic(err)
 	}
