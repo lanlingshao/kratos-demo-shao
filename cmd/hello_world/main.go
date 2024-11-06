@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"os"
+	"time"
 
 	"hello_world/internal/conf"
 
@@ -45,18 +46,26 @@ func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server) *kratos.App {
 			gs,
 			hs,
 		),
+		// 服务注册
+		// kratos.Registrar(rg),
+		kratos.StopTimeout(10*time.Second),
+		kratos.RegistrarTimeout(10*time.Second),
+		// 增加在服务启动之前执行的操作
 		kratos.BeforeStart(func(ctx context.Context) error {
 			logger.Log(log.LevelInfo, "start hello world")
 			return nil
 		}),
+		// 增加在服务启动之后执行的操作
 		kratos.AfterStart(func(ctx context.Context) error {
 			logger.Log(log.LevelInfo, "start after hello world")
 			return nil
 		}),
+		// 增加在服务停止之前执行的操作
 		kratos.BeforeStop(func(ctx context.Context) error {
 			logger.Log(log.LevelInfo, "start after hello world")
 			return nil
 		}),
+		// 增加在服务停止之后执行的操作
 		kratos.AfterStop(func(ctx context.Context) error {
 			logger.Log(log.LevelInfo, "start after hello world")
 			return nil
