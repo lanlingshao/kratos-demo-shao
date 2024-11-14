@@ -1,9 +1,9 @@
 package server
 
 import (
-	v1 "hello_world/api/helloworld/v1"
-	"hello_world/internal/conf"
-	"hello_world/internal/service"
+	v1 "github.com/lanlingshao/kratos-demo-shao/api/helloworld/v1"
+	"github.com/lanlingshao/kratos-demo-shao/internal/conf"
+	"github.com/lanlingshao/kratos-demo-shao/internal/service"
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"

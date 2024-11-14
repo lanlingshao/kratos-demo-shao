@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	pb "hello_world/api/server"
+	pb "github.com/lanlingshao/kratos-demo-shao/api/server"
 )
 
 type ServerService struct {

@@ -6,7 +6,7 @@ import (
 	"os"
 	"time"
 
-	"hello_world/internal/conf"
+	"github.com/lanlingshao/kratos-demo-shao/internal/conf"
 
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/config"

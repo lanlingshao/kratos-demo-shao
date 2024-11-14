@@ -2,9 +2,8 @@ package service
 
 import (
 	"context"
-
-	v1 "hello_world/api/helloworld/v1"
-	"hello_world/internal/biz"
+	v1 "github.com/lanlingshao/kratos-demo-shao/api/helloworld/v1"
+	"github.com/lanlingshao/kratos-demo-shao/internal/biz"
 )
 
 // GreeterService is a greeter service.
