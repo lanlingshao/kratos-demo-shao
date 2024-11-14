@@ -1,4 +1,4 @@
-module hello_world
+module github.com/lanlingshao/kratos-demo-shao
 
 go 1.21
 
