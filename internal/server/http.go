@@ -4,9 +4,11 @@ import (
 	"context"
 	"fmt"
 	"github.com/go-kratos/kratos/v2/middleware"
+	"github.com/go-kratos/kratos/v2/middleware/ratelimit"
 	"github.com/go-kratos/kratos/v2/transport"
 	v1 "github.com/lanlingshao/kratos-demo-shao/api/helloworld/v1"
 	"github.com/lanlingshao/kratos-demo-shao/internal/conf"
+	middleware2 "github.com/lanlingshao/kratos-demo-shao/internal/middleware"
 	"github.com/lanlingshao/kratos-demo-shao/internal/service"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -23,6 +25,8 @@ func NewHTTPServer(c *conf.Server, greeter *service.GreeterService, logger log.L
 			Log(),
 			authMiddleware,
 			loggingMiddleware,
+			ratelimit.Server(),
+			middleware2.TimeCostMiddleware2(),
 		),
 	}
 	if c.Http.Network != "" {
