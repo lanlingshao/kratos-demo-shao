@@ -15,6 +15,7 @@ require (
 
 require (
 	dario.cat/mergo v1.0.0 // indirect
+	github.com/bluele/gcache v0.0.2
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
 	github.com/go-kratos/aegis v0.2.0 // indirect
 	github.com/go-logr/logr v1.4.1 // indirect
@@ -32,5 +33,5 @@ require (
 	golang.org/x/text v0.15.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240528184218-531527333157 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	gitlab.mitradetech.com/package/mitrade-go-pkg v0.0.0-20241018060410-ec64a4d00160
+	gitlab.mitradetech.com/package/mitrade-go-pkg v0.0.1
 )

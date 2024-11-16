@@ -33,9 +33,16 @@ message Data {
   message Redis {
     string network = 1;
     string addr = 2;
-    google.protobuf.Duration read_timeout = 3;
-    google.protobuf.Duration write_timeout = 4;
+    float read_timeout = 3;
+    float write_timeout = 4;
+    string password = 5;
+    uint32 database = 6;
+    uint32 pool_size = 7;
+  }
+  message LocalCache {
+    int32 size = 1;
   }
   Database database = 1;
   Redis redis = 2;
+  LocalCache local_cache = 3;
 }
