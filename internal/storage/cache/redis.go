@@ -8,22 +8,35 @@ import (
 	"time"
 )
 
-func NewRedisClient(ctx context.Context, conf *conf.Data, logger log.Logger) *rds.Client {
-	var rdsClient *rds.Client
+func NewRedisClientOld(conf *conf.Data, logger log.Logger) *rds.Client {
 	redisConf := &rds.Options{
-		Addr:     conf.Redis.Addr,
-		Password: conf.Redis.Password,
-		DB:       int(conf.Redis.Database),
+		Addr:         conf.Redis.Addr,
+		Password:     conf.Redis.Password,
+		DB:           int(conf.Redis.Database),
+		ReadTimeout:  time.Duration(conf.Redis.GetReadTimeout()) * time.Millisecond,
+		WriteTimeout: time.Duration(conf.Redis.GetWriteTimeout()) * time.Millisecond,
+		PoolSize:     int(conf.Redis.GetPoolSize()),
 	}
-	if conf.Redis.ReadTimeout > 0 {
-		redisConf.ReadTimeout = time.Duration(conf.Redis.ReadTimeout) * time.Millisecond
+	redisClient := rds.NewClient(redisConf)
+	return redisClient
+}
+
+func NewRedisClient(conf *conf.Data, logger log.Logger) *rds.Client {
+	logg := log.NewHelper(log.With(logger, "module", "internal/storage/cache/redis"))
+	redisConf := &rds.Options{
+		Addr:         conf.Redis.Addr,
+		Password:     conf.Redis.Password,
+		DB:           int(conf.Redis.Database),
+		ReadTimeout:  time.Duration(conf.Redis.GetReadTimeout()) * time.Millisecond,
+		WriteTimeout: time.Duration(conf.Redis.GetWriteTimeout()) * time.Millisecond,
+		PoolSize:     int(conf.Redis.GetPoolSize()),
 	}
-	if conf.Redis.WriteTimeout > 0 {
-		redisConf.WriteTimeout = time.Duration(conf.Redis.WriteTimeout) * time.Millisecond
+	redisClient := rds.NewClient(redisConf)
+	timeout, cancelFunc := context.WithTimeout(context.Background(), time.Second*5)
+	defer cancelFunc()
+	err := redisClient.Ping(timeout).Err()
+	if err != nil {
+		logg.Fatalf("redis connect error: %v", err)
 	}
-	if conf.Redis.PoolSize > 0 {
-		redisConf.PoolSize = int(conf.Redis.PoolSize)
-	}
-	rdsClient = rds.NewClient(redisConf)
-	return rdsClient
+	return redisClient
 }

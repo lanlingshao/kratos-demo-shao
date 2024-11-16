@@ -1,24 +1,45 @@
 package data
 
 import (
-	"github.com/lanlingshao/kratos-demo-shao/internal/conf"
-
+	"github.com/bluele/gcache"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
+	"github.com/lanlingshao/kratos-demo-shao/internal/conf"
+	"github.com/lanlingshao/kratos-demo-shao/internal/storage/cache"
+	"github.com/redis/go-redis/v9"
 )
 
 // ProviderSet is data providers.
-var ProviderSet = wire.NewSet(NewData, NewGreeterRepo)
+var ProviderSet = wire.NewSet(NewData, NewRedisClient, NewLocalCacheClient, NewGreeterRepo)
 
 // Data .
 type Data struct {
-	// TODO wrapped database client
+	redisClient redis.UniversalClient
+	localCache  gcache.Cache
+	logg        *log.Helper
 }
 
 // NewData .
-func NewData(c *conf.Data, logger log.Logger) (*Data, func(), error) {
-	cleanup := func() {
-		log.NewHelper(logger).Info("closing the data resources")
+func NewData(c *conf.Data, redisClient redis.UniversalClient, localCache gcache.Cache, logger log.Logger) (*Data, func(), error) {
+	logg := log.NewHelper(log.With(logger, "module", "internal/data"))
+	d := &Data{
+		redisClient: redisClient,
+		logg:        logg,
+		localCache:  localCache,
 	}
-	return &Data{}, cleanup, nil
+	cleanup := func() {
+		logg.Info("closing the data resources")
+		if err := d.redisClient.Close(); err != nil {
+			logg.Error(err)
+		}
+	}
+	return d, cleanup, nil
+}
+
+func NewRedisClient(conf *conf.Data, logger log.Logger) redis.UniversalClient {
+	return cache.NewRedisClient(conf, logger)
+}
+
+func NewLocalCacheClient(conf *conf.Data, logger log.Logger) gcache.Cache {
+	return cache.NewLocalCacheClient(conf, logger)
 }
