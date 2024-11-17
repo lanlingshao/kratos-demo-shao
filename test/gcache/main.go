@@ -2,27 +2,27 @@ package main
 
 import (
 	"fmt"
-	"github.com/bluele/gcache"
+	"github.com/lanlingshao/kratos-demo-shao/internal/storage/cache"
 )
 
 func main() {
-	cache := gcache.New(4).Build()
-	cache.Set("key1", 1)
-	cache.Set("key2", 2)
-	cache.Set("key3", 3)
-	cache.Set("key4", 4)
-	v, err := cache.Get("key1")
+	cacheCli := cache.NewLocalCacheClient(&cache.LocalCacheOption{Size: 3}, nil)
+	cacheCli.Set("key1", 1)
+	cacheCli.Set("key2", 2)
+	cacheCli.Set("key3", 3)
+	cacheCli.Set("key4", 4)
+	v, err := cacheCli.Get("key1")
 	if err != nil {
 		fmt.Println(err)
 	}
 	fmt.Println(v)
 
-	cache2 := gcache.New(3).Build()
-	cache2.Set("key1", 1)
-	cache2.Set("key2", 2)
-	cache2.Set("key3", 3)
-	cache2.Set("key4", 4)
-	v, err = cache2.Get("key1")
+	cacheCli2 := cache.NewLocalCacheClient(&cache.LocalCacheOption{Size: 4}, nil)
+	cacheCli2.Set("key1", 1)
+	cacheCli2.Set("key2", 2)
+	cacheCli2.Set("key3", 3)
+	cacheCli2.Set("key4", 4)
+	v, err = cacheCli2.Get("key1")
 	if err != nil {
 		fmt.Println(err)
 	}
