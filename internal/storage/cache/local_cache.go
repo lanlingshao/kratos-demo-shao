@@ -3,11 +3,18 @@ package cache
 import (
 	"github.com/bluele/gcache"
 	"github.com/go-kratos/kratos/v2/log"
-	"github.com/lanlingshao/kratos-demo-shao/internal/conf"
 )
 
-func NewLocalCacheClient(conf *conf.Data, logger log.Logger) gcache.Cache {
-	// size是缓存可以存的key数量
-	localCacheClient := gcache.New(int(conf.LocalCache.GetSize())).LRU().Build()
+type LocalCacheOption struct {
+	Size int // Size is the amount of keys that the cache can store
+}
+
+func NewLocalCacheClient(option *LocalCacheOption, logger log.Logger) gcache.Cache {
+	if option == nil || option.Size <= 0 {
+		option = &LocalCacheOption{
+			Size: 10000,
+		}
+	}
+	localCacheClient := gcache.New(option.Size).LRU().Build()
 	return localCacheClient
 }

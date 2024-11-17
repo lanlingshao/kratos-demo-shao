@@ -7,6 +7,7 @@ import (
 	"github.com/lanlingshao/kratos-demo-shao/internal/conf"
 	"github.com/lanlingshao/kratos-demo-shao/internal/storage/cache"
 	"github.com/redis/go-redis/v9"
+	"time"
 )
 
 // ProviderSet is data providers.
@@ -37,9 +38,21 @@ func NewData(c *conf.Data, redisClient redis.UniversalClient, localCache gcache.
 }
 
 func NewRedisClient(conf *conf.Data, logger log.Logger) redis.UniversalClient {
-	return cache.NewRedisClient(conf, logger)
+	redisConf := &redis.Options{
+		Addr:         conf.Redis.Addr,
+		Password:     conf.Redis.Password,
+		DB:           int(conf.Redis.Database),
+		ReadTimeout:  time.Duration(conf.Redis.GetReadTimeout()) * time.Millisecond,
+		WriteTimeout: time.Duration(conf.Redis.GetWriteTimeout()) * time.Millisecond,
+		PoolSize:     int(conf.Redis.GetPoolSize()),
+	}
+
+	return cache.NewRedisClient(redisConf, logger)
 }
 
 func NewLocalCacheClient(conf *conf.Data, logger log.Logger) gcache.Cache {
-	return cache.NewLocalCacheClient(conf, logger)
+	option := &cache.LocalCacheOption{
+		Size: int(conf.LocalCache.GetSize()),
+	}
+	return cache.NewLocalCacheClient(option, logger)
 }
