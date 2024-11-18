@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/lanlingshao/kratos-demo-shao/internal/conf"
+	"github.com/lanlingshao/kratos-demo-shao/internal/cron"
 	"github.com/lanlingshao/kratos-demo-shao/internal/service"
 	"github.com/xxl-job/xxl-job-executor-go"
-	"github.com/xxl-job/xxl-job-executor-go/example/task"
 )
 
 type CronWorker struct {
@@ -38,9 +38,11 @@ func NewCronWorker(c *conf.Server, greeter *service.GreeterService, logger log.L
 	// 设置日志查看handler
 	exec.LogHandler(customLogHandle)
 	// 注册任务handler
-	exec.RegTask("task.test", task.Test)
-	exec.RegTask("task.test2", task.Test2)
-	exec.RegTask("task.panic", task.Panic)
+	cron.RegisterTaskHandler(cron.CronTaskOption{
+		Executor: exec,
+		Service:  greeter,
+		Log:      logg,
+	})
 	return &CronWorker{
 		exec: exec,
 	}
