@@ -5,7 +5,7 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
 	"github.com/lanlingshao/kratos-demo-shao/internal/conf"
-	"github.com/lanlingshao/kratos-demo-shao/internal/storage/cache"
+	"github.com/lanlingshao/kratos-demo-shao/internal/resource/cache"
 	"github.com/redis/go-redis/v9"
 	"time"
 )

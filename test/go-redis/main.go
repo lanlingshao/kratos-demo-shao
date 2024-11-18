@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"github.com/go-kratos/kratos/v2/log"
-	"github.com/lanlingshao/kratos-demo-shao/internal/storage/cache"
+	"github.com/lanlingshao/kratos-demo-shao/internal/resource/cache"
 	rds "github.com/redis/go-redis/v9"
 	"os"
 	"time"

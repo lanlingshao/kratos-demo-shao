@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/lanlingshao/kratos-demo-shao/internal/storage/cache"
+	"github.com/lanlingshao/kratos-demo-shao/internal/resource/cache"
 )
 
 func main() {
