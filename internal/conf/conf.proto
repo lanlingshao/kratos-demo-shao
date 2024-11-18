@@ -21,8 +21,16 @@ message Server {
     string addr = 2;
     google.protobuf.Duration timeout = 3;
   }
+  message CronWorker {
+    string addr = 1;
+    string access_token = 2;
+    string executor_ip = 3;
+    string executor_port = 4;
+    string registry_key = 5;
+  }
   HTTP http = 1;
   GRPC grpc = 2;
+  CronWorker cron_worker = 3;
 }
 
 message Data {

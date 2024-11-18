@@ -35,7 +35,7 @@ func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*
 	greeterService := service.NewGreeterService(greeterUsecase)
 	grpcServer := server.NewGRPCServer(confServer, greeterService, logger)
 	httpServer := server.NewHTTPServer(confServer, greeterService, logger)
-	cronWorker := server.NewCronWorker()
+	cronWorker := server.NewCronWorker(confServer)
 	app := newApp(logger, grpcServer, httpServer, cronWorker)
 	return app, func() {
 		cleanup()

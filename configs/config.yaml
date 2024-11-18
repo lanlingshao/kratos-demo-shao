@@ -5,6 +5,13 @@ server:
   grpc:
     addr: 0.0.0.0:9000
     timeout: 1s
+  cron_worker:
+    addr: http://127.0.0.1:8080/xxl-job-admin
+    access_token: default_token
+    executor_ip: 127.0.0.1
+    executor_port: "9999"
+    registry_key: cms-jobs
+
 data:
   database:
     driver: mysql

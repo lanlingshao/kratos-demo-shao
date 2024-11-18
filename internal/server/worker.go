@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"fmt"
+	"github.com/lanlingshao/kratos-demo-shao/internal/conf"
 	"github.com/xxl-job/xxl-job-executor-go"
 	"github.com/xxl-job/xxl-job-executor-go/example/task"
 	"log"
@@ -21,14 +22,14 @@ func (c *CronWorker) Stop(ctx context.Context) error {
 	return nil
 }
 
-func NewCronWorker() *CronWorker {
+func NewCronWorker(c *conf.Server) *CronWorker {
 	exec := xxl.NewExecutor(
-		xxl.ServerAddr("http://127.0.0.1:8080/xxl-job-admin"),
-		xxl.AccessToken("default_token"), // 请求令牌(默认为空)
-		xxl.ExecutorIp("127.0.0.1"),      // 可自动获取
-		xxl.ExecutorPort("9999"),         // 默认9999（非必填）
-		xxl.RegistryKey("cms-jobs"),      // 执行器名称
-		xxl.SetLogger(&logger{}),         // 自定义日志
+		xxl.ServerAddr(c.CronWorker.GetAddr()),
+		xxl.AccessToken(c.CronWorker.GetAccessToken()),   // 请求令牌(默认为空)
+		xxl.ExecutorIp(c.CronWorker.GetExecutorIp()),     // 可自动获取
+		xxl.ExecutorPort(c.CronWorker.GetExecutorPort()), // 默认9999（非必填）
+		xxl.RegistryKey(c.CronWorker.GetRegistryKey()),   // 执行器名称
+		xxl.SetLogger(&logger{}),                         // 自定义日志
 	)
 	exec.Init()
 	exec.Use(customMiddleware)
