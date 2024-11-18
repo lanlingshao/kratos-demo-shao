@@ -6,8 +6,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/lanlingshao/kratos-demo-shao/internal/conf"
-
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/config"
 	"github.com/go-kratos/kratos/v2/config/file"
@@ -15,6 +13,8 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-kratos/kratos/v2/transport/http"
+	"github.com/lanlingshao/kratos-demo-shao/internal/conf"
+	"github.com/lanlingshao/kratos-demo-shao/internal/server"
 
 	_ "go.uber.org/automaxprocs"
 )
@@ -35,7 +35,7 @@ func init() {
 	flag.StringVar(&flagconf, "conf", "../../configs", "config path, eg: -conf config.yaml")
 }
 
-func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server) *kratos.App {
+func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server, ws *server.CronWorker) *kratos.App {
 	return kratos.New(
 		kratos.ID(id),
 		kratos.Name(Name),
@@ -45,6 +45,7 @@ func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server) *kratos.App {
 		kratos.Server(
 			gs,
 			hs,
+			ws,
 		),
 		// 服务注册
 		// kratos.Registrar(rg),
