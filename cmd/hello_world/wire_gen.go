@@ -24,9 +24,10 @@ import (
 
 // wireApp init kratos application.
 func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*kratos.App, func(), error) {
+	db := data.NewMysqlClient(confData, logger)
 	universalClient := data.NewRedisClient(confData, logger)
 	cache := data.NewLocalCacheClient(confData, logger)
-	dataData, cleanup, err := data.NewData(confData, universalClient, cache, logger)
+	dataData, cleanup, err := data.NewData(confData, db, universalClient, cache, logger)
 	if err != nil {
 		return nil, nil, err
 	}

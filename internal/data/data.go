@@ -6,24 +6,28 @@ import (
 	"github.com/google/wire"
 	"github.com/lanlingshao/kratos-demo-shao/internal/conf"
 	"github.com/lanlingshao/kratos-demo-shao/internal/resource/cache"
+	"github.com/lanlingshao/kratos-demo-shao/internal/resource/db"
 	"github.com/redis/go-redis/v9"
+	"gorm.io/gorm"
 	"time"
 )
 
 // ProviderSet is data providers.
-var ProviderSet = wire.NewSet(NewData, NewRedisClient, NewLocalCacheClient, NewGreeterRepo)
+var ProviderSet = wire.NewSet(NewData, NewMysqlClient, NewRedisClient, NewLocalCacheClient, NewGreeterRepo)
 
 // Data .
 type Data struct {
+	mysqlClient *gorm.DB
 	redisClient redis.UniversalClient
 	localCache  gcache.Cache
 	logg        *log.Helper
 }
 
 // NewData .
-func NewData(c *conf.Data, redisClient redis.UniversalClient, localCache gcache.Cache, logger log.Logger) (*Data, func(), error) {
+func NewData(c *conf.Data, mysqlClient *gorm.DB, redisClient redis.UniversalClient, localCache gcache.Cache, logger log.Logger) (*Data, func(), error) {
 	logg := log.NewHelper(log.With(logger, "module", "internal/data"))
 	d := &Data{
+		mysqlClient: mysqlClient,
 		redisClient: redisClient,
 		logg:        logg,
 		localCache:  localCache,
@@ -55,4 +59,8 @@ func NewLocalCacheClient(conf *conf.Data, logger log.Logger) gcache.Cache {
 		Size: int(conf.LocalCache.GetSize()),
 	}
 	return cache.NewLocalCacheClient(option, logger)
+}
+
+func NewMysqlClient(conf *conf.Data, logger log.Logger) *gorm.DB {
+	return db.NewMySQLClient(conf, logger)
 }

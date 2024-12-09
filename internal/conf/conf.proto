@@ -50,7 +50,15 @@ message Data {
   message LocalCache {
     int32 size = 1;
   }
+  message Mysql {
+    string username = 1;
+    string password = 2;
+    string host = 3;
+    string port = 4;
+    string database = 5;
+  }
   Database database = 1;
   Redis redis = 2;
   LocalCache local_cache = 3;
+  Mysql mysql = 4;
 }
